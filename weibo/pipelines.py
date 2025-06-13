@@ -32,10 +32,6 @@ def download_image(pic_url, image_path, headers):
     except Exception as e:
         return False, f"下载图片失败: {pic_url}, 错误: {str(e)}"
 
-class WeiboPipeline:
-    def process_item(self, item, spider):
-        return item
-
 class CsvPipeline(object):
     def __init__(self):
         self.ids_seen = set()
@@ -68,9 +64,14 @@ class CsvPipeline(object):
         return f"https://image.baidu.com/search/down?url={original_url}"
 
     def process_item(self, item, spider):
+        # 检查是否已经存在相同的微博ID
         if item['weibo']['id'] in self.ids_seen:
-            return item
+            raise DropItem("过滤重复微博: %s" % item)
+
+        # 将新ID添加到集合和文件中
         self.ids_seen.add(item['weibo']['id'])
+        with open(self.processed_ids_file, 'a', encoding='utf-8') as f:
+            f.write(f"{item['weibo']['id']}\n")
 
         # 处理图片链接
         pics = item['weibo'].get('pics', [])
