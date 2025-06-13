@@ -2,56 +2,11 @@
 
 import os
 
-# Scrapy settings for weibo project
-
 BOT_NAME = 'weibo'
-
 SPIDER_MODULES = ['weibo.spiders']
 NEWSPIDER_MODULE = 'weibo.spiders'
-
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
-
-# Obey robots.txt rules
-ROBOTSTXT_OBEY = False
-
-# Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 16
-
-# Configure a delay for requests for the same website (default: 0)
-DOWNLOAD_DELAY = 1
-
-# Enable or disable downloader middlewares
-DOWNLOADER_MIDDLEWARES = {
-   'weibo.middlewares.WeiboDownloaderMiddleware': 543,
-}
-
-# Configure item pipelines
-ITEM_PIPELINES = {
-   'weibo.pipelines.WeiboPipeline': 300,
-}
-
-# Enable and configure the AutoThrottle extension (disabled by default)
-AUTOTHROTTLE_ENABLED = True
-AUTOTHROTTLE_START_DELAY = 5
-AUTOTHROTTLE_MAX_DELAY = 60
-AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
-AUTOTHROTTLE_DEBUG = False
-
-# Enable showing throttling stats for every response received:
-AUTOTHROTTLE_DEBUG = False
-
-# Enable and configure HTTP caching (disabled by default)
-HTTPCACHE_ENABLED = True
-HTTPCACHE_EXPIRATION_SECS = 0
-HTTPCACHE_DIR = 'httpcache'
-HTTPCACHE_IGNORE_HTTP_CODES = []
-HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-
-# Set settings whose default value is deprecated to a future-proof value
-REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'
-TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
-FEED_EXPORT_ENCODING = 'utf-8'
+COOKIES_ENABLED = False
+TELNETCONSOLE_ENABLED = False
 
 # 日志配置
 LOG_LEVEL = 'INFO'
@@ -68,6 +23,7 @@ CLOSESPIDER_PAGECOUNT = 0  # 不设置页面数量限制
 CLOSESPIDER_ERRORCOUNT = 0  # 不设置错误数量限制
 
 # 并发设置
+CONCURRENT_REQUESTS = 16
 CONCURRENT_REQUESTS_PER_DOMAIN = 8
 CONCURRENT_REQUESTS_PER_IP = 1
 
@@ -75,6 +31,7 @@ CONCURRENT_REQUESTS_PER_IP = 1
 DOWNLOAD_TIMEOUT = 15
 DOWNLOAD_MAXSIZE = 0
 DOWNLOAD_WARNSIZE = 0
+DOWNLOAD_DELAY = 1
 
 # 允许下载图片的外部域名
 SPIDER_ALLOWED_DOMAINS = ['image.baidu.com']
@@ -85,8 +42,27 @@ WEIBO_COOKIE = os.getenv('WEIBO_COOKIE', '')
 DEFAULT_REQUEST_HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-    'User-Agent': USER_AGENT,
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'cookie': WEIBO_COOKIE,
+}
+
+# 自定义下载器中间件
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.offsite.OffsiteMiddleware': None,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+}
+
+# 启用缓存
+HTTPCACHE_ENABLED = False
+HTTPCACHE_EXPIRATION_SECS = 0
+HTTPCACHE_DIR = 'httpcache'
+HTTPCACHE_IGNORE_HTTP_CODES = []
+HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# 管道配置
+ITEM_PIPELINES = {
+    'weibo.pipelines.CsvPipeline': 300,
+    'weibo.pipelines.DuplicatesPipeline': 400,
 }
 
 # 搜索配置
@@ -105,6 +81,19 @@ IMAGES_EXPIRES = 90  # 图片过期天数
 IMAGES_MIN_HEIGHT = 100  # 最小图片高度
 IMAGES_MIN_WIDTH = 100  # 最小图片宽度
 FILES_STORE = './'
+
+# 配置MongoDB数据库
+# MONGO_URI = 'localhost'
+
+# 配置MySQL数据库，以下为默认配置，可以根据实际情况更改，程序会自动生成一个名为weibo的数据库，如果想换其它名字请更改MYSQL_DATABASE值
+# MYSQL_HOST = 'localhost'
+# MYSQL_PORT = 3306
+# MYSQL_USER = 'root'
+# MYSQL_PASSWORD = '123456'
+# MYSQL_DATABASE = 'weibo'
+
+# 配置SQLite数据库
+# SQLITE_DATABASE = 'weibo.db'
 
 # 重试设置
 RETRY_ENABLED = True
