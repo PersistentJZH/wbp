@@ -68,7 +68,7 @@ class SearchSpider(scrapy.Spider):
             # 对关键词进行URL编码
             encoded_keyword = quote(keyword)
             # 构造基础URL，添加必要的参数
-            base_url = f'https://s.weibo.com/weibo?q=%27%27&atten=1&haspic=1'
+            base_url = f'https://s.weibo.com/weibo?q=%27%27&scope=ori&atten=1&haspic=1'
             
             # 记录请求时间
             request_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
